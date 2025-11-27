@@ -10,7 +10,7 @@ import FileBrowser from './FileBrowser';
 import BackupList from './BackupList';
 
 // --- REAL API CALLS ---
-const API_BASE = `https://nonsymphonious-terrell-nonrudimental.ngrok-free.dev/api`;
+const API_BASE = `${import.meta.env.VITE_API_URL || 'http://localhost:8080'}/api`;
 
 const api = {
   fetchDashboardData: async () => {
@@ -19,7 +19,7 @@ const api = {
     
     try {
       // Fetch backups and storage in parallel
-      const baseUrl = 'https://nonsymphonious-terrell-nonrudimental.ngrok-free.dev';
+      const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
       const [backupsResponse, storageResponse] = await Promise.all([
         fetch(`${API_BASE}/backups?uid=${uid}`),
         fetch(`${baseUrl}/api/storage/${uid}`)

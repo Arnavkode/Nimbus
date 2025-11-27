@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Folder, File, HardDrive, Loader2, ArrowUp, UploadCloud } from 'lucide-react';
 
-const API_BASE = 'https://nonsymphonious-terrell-nonrudimental.ngrok-free.dev';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
 const FileBrowser = ({ username, onBackupComplete }) => {
   const [currentPath, setCurrentPath] = useState('.');

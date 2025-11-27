@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, Download, Loader2, Package, AlertCircle, X, Lock } from 'lucide-react';
 
-const API_BASE = 'https://nonsymphonious-terrell-nonrudimental.ngrok-free.dev';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
 const BackupList = ({ username, refreshTrigger }) => {
   const [backups, setBackups] = useState([]);
