@@ -101,7 +101,7 @@ export default function App() {
     }
 
     setIsLoading(true);
-    const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+    const API_BASE = import.meta.env.VITE_API_URL;
     const endpoint = isLoginMode 
       ? `${API_BASE}/api/login` 
       : `${API_BASE}/api/register`;
