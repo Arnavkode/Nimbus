@@ -3,7 +3,7 @@ import {
   User, ChevronDown, Plus, UploadCloud, 
   File, Folder, Settings, LogOut, FileText, ImageIcon, 
   Search, HardDrive, FolderPlus, Clock, CheckCircle, AlertTriangle, ArrowRight,
-  Database, Server, Loader2, LayoutDashboard, Archive, Sun, Moon
+  Database, Server, Loader2, LayoutDashboard, Archive, Sun, Moon, Menu, X
 } from 'lucide-react';
 import { useTheme } from './ThemeContext';
 import FileBrowser from './FileBrowser';
@@ -119,8 +119,8 @@ const AnimatedBackgroundStyles = () => (
   </style>
 );
 
-// --- Dashboard Header Component (Scaled Up 200%) ---
-const DashboardHeader = ({ username }) => {
+// --- Dashboard Header Component (Scaled Up 200% + Mobile Responsive) ---
+const DashboardHeader = ({ username, onMenuClick }) => {
   const [showDropdown, setShowDropdown] = useState(false);
 
   const handleLogout = () => {
@@ -128,29 +128,38 @@ const DashboardHeader = ({ username }) => {
   };
 
   return (
-    <header className="flex items-center p-12 h-48 bg-black/20 dark:bg-white/20 backdrop-blur-lg border-b border-white/10 dark:border-gray-300/20 sticky top-0 z-30">
+    <header className="flex items-center p-4 sm:p-6 md:p-12 h-auto sm:h-32 md:h-48 bg-black/20 dark:bg-white/20 backdrop-blur-lg border-b border-white/10 dark:border-gray-300/20 sticky top-0 z-30">
+      {/* Left: Mobile Menu Button */}
+      <button
+        onClick={onMenuClick}
+        className="lg:hidden mr-3 sm:mr-4 p-2 rounded-lg hover:bg-white/5 transition-all touch-manipulation"
+        aria-label="Toggle menu"
+      >
+        <Menu size={24} className="text-white dark:text-gray-900" />
+      </button>
+
       {/* Middle: Search */}
-      <div className="relative w-full max-w-6xl mx-auto">
-        <span className="absolute inset-y-0 left-0 flex items-center pl-10">
-          <Search size={48} className="text-gray-400 dark:text-gray-900" />
+      <div className="relative flex-1 max-w-6xl">
+        <span className="absolute inset-y-0 left-0 flex items-center pl-3 sm:pl-6 md:pl-10">
+          <Search size={20} className="sm:w-6 sm:h-6 md:w-12 md:h-12 text-gray-400 dark:text-gray-900" />
         </span>
         <input
           type="text"
-          placeholder="Search files and folders..."
-        className="w-full pl-28 pr-10 py-8 bg-gray-900/50 dark:bg-white/50 border-2 border-gray-700 dark:border-gray-300 rounded-2xl text-4xl text-gray-200 dark:text-gray-900
-                 focus:outline-none focus:ring-4 focus:ring-cyan-500 focus:border-cyan-500 transition-all"
+          placeholder="Search files..."
+          className="w-full pl-10 sm:pl-14 md:pl-28 pr-3 sm:pr-6 md:pr-10 py-2 sm:py-4 md:py-8 bg-gray-900/50 dark:bg-white/50 border-2 border-gray-700 dark:border-gray-300 rounded-lg sm:rounded-xl md:rounded-2xl text-sm sm:text-2xl md:text-4xl text-gray-200 dark:text-gray-900
+                 focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-cyan-500 focus:border-cyan-500 transition-all"
         />
       </div>
 
       {/* Right: User Menu */}
-      <div className="relative flex items-center gap-8 ml-auto">
+      <div className="relative flex items-center gap-3 sm:gap-6 md:gap-8 ml-2 sm:ml-4 md:ml-auto">
         <button
           onClick={() => setShowDropdown(!showDropdown)}
-          className="flex items-center gap-6 px-8 py-4 rounded-2xl hover:bg-white/5 transition-all"
+          className="flex items-center gap-2 sm:gap-4 md:gap-6 px-2 sm:px-4 md:px-8 py-2 sm:py-3 md:py-4 rounded-lg sm:rounded-xl md:rounded-2xl hover:bg-white/5 transition-all touch-manipulation"
         >
-          <User size={64} className="rounded-full bg-cyan-800 p-4" />
-          <span className="text-4xl text-gray-300 dark:text-gray-900 hidden md:block">{username}</span>
-          <ChevronDown size={48} className={`text-gray-500 dark:text-gray-900 transition-transform ${showDropdown ? 'rotate-180' : ''}`} />
+          <User size={32} className="sm:w-12 sm:h-12 md:w-16 md:h-16 rounded-full bg-cyan-800 p-1 sm:p-2 md:p-4" />
+          <span className="text-base sm:text-2xl md:text-4xl text-gray-300 dark:text-gray-900 hidden sm:block">{username}</span>
+          <ChevronDown size={20} className="sm:w-8 sm:h-8 md:w-12 md:h-12 text-gray-500 dark:text-gray-900 transition-transform ${showDropdown ? 'rotate-180' : ''}" />
         </button>
 
         {/* Dropdown Menu */}
@@ -163,37 +172,37 @@ const DashboardHeader = ({ username }) => {
             />
             
             {/* Dropdown Content */}
-            <div className="absolute right-0 top-full mt-4 w-96 rounded-2xl shadow-2xl bg-black/40 dark:bg-white/40 backdrop-blur-xl border-2 border-white/20 dark:border-gray-300/20 overflow-hidden z-50">
+            <div className="absolute right-0 top-full mt-2 sm:mt-4 w-64 sm:w-80 md:w-96 rounded-xl sm:rounded-2xl shadow-2xl bg-black/40 dark:bg-white/40 backdrop-blur-xl border-2 border-white/20 dark:border-gray-300/20 overflow-hidden z-50">
               {/* User Info Section */}
-              <div className="px-8 py-6 border-b border-white/10">
-                <div className="flex items-center gap-4 mb-2">
-                  <User size={48} className="rounded-full bg-cyan-800 p-3" />
+              <div className="px-4 sm:px-6 md:px-8 py-4 sm:py-5 md:py-6 border-b border-white/10">
+                <div className="flex items-center gap-3 sm:gap-4 mb-2">
+                  <User size={32} className="sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full bg-cyan-800 p-1 sm:p-2 md:p-3" />
                   <div>
-                    <p className="text-3xl font-semibold text-white dark:text-gray-900">{username}</p>
-                    <p className="text-2xl text-gray-400 dark:text-gray-900">Logged in</p>
+                    <p className="text-lg sm:text-2xl md:text-3xl font-semibold text-white dark:text-gray-900">{username}</p>
+                    <p className="text-sm sm:text-xl md:text-2xl text-gray-400 dark:text-gray-900">Logged in</p>
                   </div>
                 </div>
               </div>
 
               {/* Menu Items */}
-              <div className="py-4">
+              <div className="py-2 sm:py-3 md:py-4">
                 <button
                   onClick={() => {
                     setShowDropdown(false);
                     // Navigate to settings if needed
                   }}
-                  className="w-full flex items-center gap-6 px-8 py-6 text-gray-300 dark:text-gray-900 hover:bg-white/5 dark:hover:bg-gray-900/5 transition-all text-left"
+                  className="w-full flex items-center gap-3 sm:gap-4 md:gap-6 px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-6 text-gray-300 dark:text-gray-900 hover:bg-white/5 dark:hover:bg-gray-900/5 transition-all text-left touch-manipulation"
                 >
-                  <Settings size={40} />
-                  <span className="text-3xl">Settings</span>
+                  <Settings size={20} className="sm:w-8 sm:h-8 md:w-10 md:h-10" />
+                  <span className="text-base sm:text-2xl md:text-3xl">Settings</span>
                 </button>
 
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center gap-6 px-8 py-6 text-red-400 dark:text-red-600 hover:bg-red-500/10 transition-all text-left"
+                  className="w-full flex items-center gap-3 sm:gap-4 md:gap-6 px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-6 text-red-400 dark:text-red-600 hover:bg-red-500/10 transition-all text-left touch-manipulation"
                 >
-                  <LogOut size={40} />
-                  <span className="text-3xl font-medium">Logout</span>
+                  <LogOut size={20} className="sm:w-8 sm:h-8 md:w-10 md:h-10" />
+                  <span className="text-base sm:text-2xl md:text-3xl font-medium">Logout</span>
                 </button>
               </div>
             </div>
@@ -204,73 +213,105 @@ const DashboardHeader = ({ username }) => {
   );
 };
 
-// --- Dashboard Sidebar Component (SCALED UP 200% + LAYOUT FIX) ---
-const DashboardSidebar = ({ activeView, setActiveView }) => {
+// --- Dashboard Sidebar Component (SCALED UP 200% + Mobile Drawer) ---
+const DashboardSidebar = ({ activeView, setActiveView, isOpen, onClose }) => {
   const NavItem = ({ icon, label, active = false, onClick }) => (
     <button 
-      onClick={onClick}
-      className={`flex items-center w-full gap-10 px-12 py-10 rounded-2xl transition-colors
+      onClick={() => {
+        onClick();
+        // Close drawer on mobile when item is clicked
+        if (window.innerWidth < 1024) {
+          onClose();
+        }
+      }}
+      className={`flex items-center w-full gap-4 sm:gap-6 md:gap-10 px-4 sm:px-8 md:px-12 py-4 sm:py-6 md:py-10 rounded-lg sm:rounded-xl md:rounded-2xl transition-colors touch-manipulation
       ${active 
         ? 'bg-gradient-to-r from-purple-700/30 to-cyan-600/20 dark:from-blue-500/30 dark:to-cyan-500/20 text-cyan-300 dark:text-cyan-700 border-2 border-purple-500/30 dark:border-blue-500/30' 
         : 'text-gray-300 dark:text-gray-900 hover:bg-white/10 dark:hover:bg-gray-900/10 hover:text-white dark:hover:text-gray-900'
       }`}
     >
-      {React.cloneElement(icon, { size: 56 })}
-      <span className="text-4xl font-medium">{label}</span>
+      <span className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 lg:w-14 lg:h-14 flex-shrink-0">
+        {React.cloneElement(icon, { size: "100%", className: "w-full h-full" })}
+      </span>
+      <span className="text-base sm:text-2xl md:text-4xl font-medium">{label}</span>
     </button>
   );
 
   return (
-    <nav className="w-[48rem] p-16 bg-black/20 dark:bg-white/20 backdrop-blur-lg border-r border-white/10 dark:border-gray-300/20 flex flex-col gap-12 flex-shrink-0">
-      {/* Brand */}
-      <div className="flex items-center gap-8 mb-8 px-4">
-        <NimbusVaultLogo />
-        <span className="text-6xl font-bold text-white dark:text-gray-900">NimbusVault</span>
-      </div>
+    <>
+      {/* Mobile Backdrop */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+          onClick={onClose}
+        />
+      )}
       
-      {/* Navigation */}
-      <div className="flex flex-col gap-6">
-        <NavItem 
-          icon={<LayoutDashboard />} 
-          label="Dashboard" 
-          active={activeView === 'overview'} 
-          onClick={() => setActiveView('overview')}
-        />
-        <NavItem 
-          icon={<HardDrive />} 
-          label="Browse Files" 
-          active={activeView === 'files'} 
-          onClick={() => setActiveView('files')}
-        />
-        <NavItem 
-          icon={<Archive />} 
-          label="My Vault" 
-          active={activeView === 'vault'} 
-          onClick={() => setActiveView('vault')}
-        />
-        <NavItem 
-          icon={<Settings />} 
-          label="Settings" 
-          active={activeView === 'settings'} 
-          onClick={() => setActiveView('settings')}
-        />
-      </div>
-      
-      {/* Logout Button */}
-      <div className="mt-auto">
-        <button
-          onClick={api.logout}
-          className="flex items-center w-full gap-10 px-12 py-10 rounded-2xl text-gray-400 dark:text-gray-900 hover:bg-red-800/20 dark:hover:bg-red-600/20 hover:text-red-400 dark:hover:text-red-600 transition-colors"
-        >
-          <LogOut size={56} />
-          <span className="text-4xl font-medium">Logout</span>
-        </button>
-      </div>
-    </nav>
+      {/* Sidebar/Drawer */}
+      <nav className={`fixed lg:static top-0 left-0 h-full w-64 sm:w-72 md:w-80 lg:w-[48rem] p-4 sm:p-8 md:p-16 bg-black/20 dark:bg-white/20 backdrop-blur-lg border-r border-white/10 dark:border-gray-300/20 flex flex-col gap-6 sm:gap-8 md:gap-12 flex-shrink-0 z-50 transform transition-transform duration-300 ease-in-out ${
+        isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+      }`}>
+        {/* Brand with Close Button (Mobile) */}
+        <div className="flex items-center justify-between mb-4 sm:mb-6 md:mb-8 px-2 sm:px-4">
+          <div className="flex items-center gap-3 sm:gap-6 md:gap-8">
+            <NimbusVaultLogo />
+            <span className="text-2xl sm:text-4xl md:text-6xl font-bold text-white dark:text-gray-900">NimbusVault</span>
+          </div>
+          <button
+            onClick={onClose}
+            className="lg:hidden p-2 rounded-lg hover:bg-white/5 transition-all touch-manipulation"
+            aria-label="Close menu"
+          >
+            <X size={24} className="text-white dark:text-gray-900" />
+          </button>
+        </div>
+        
+        {/* Navigation */}
+        <div className="flex flex-col gap-3 sm:gap-4 md:gap-6">
+          <NavItem 
+            icon={<LayoutDashboard />} 
+            label="Dashboard" 
+            active={activeView === 'overview'} 
+            onClick={() => setActiveView('overview')}
+          />
+          <NavItem 
+            icon={<HardDrive />} 
+            label="Browse Files" 
+            active={activeView === 'files'} 
+            onClick={() => setActiveView('files')}
+          />
+          <NavItem 
+            icon={<Archive />} 
+            label="My Vault" 
+            active={activeView === 'vault'} 
+            onClick={() => setActiveView('vault')}
+          />
+          <NavItem 
+            icon={<Settings />} 
+            label="Settings" 
+            active={activeView === 'settings'} 
+            onClick={() => setActiveView('settings')}
+          />
+        </div>
+        
+        {/* Logout Button */}
+        <div className="mt-auto">
+          <button
+            onClick={api.logout}
+            className="flex items-center w-full gap-4 sm:gap-6 md:gap-10 px-4 sm:px-8 md:px-12 py-4 sm:py-6 md:py-10 rounded-lg sm:rounded-xl md:rounded-2xl text-gray-400 dark:text-gray-900 hover:bg-red-800/20 dark:hover:bg-red-600/20 hover:text-red-400 dark:hover:text-red-600 transition-colors touch-manipulation"
+          >
+            <span className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 lg:w-14 lg:h-14 flex-shrink-0">
+              <LogOut size="100%" className="w-full h-full" />
+            </span>
+            <span className="text-base sm:text-2xl md:text-4xl font-medium">Logout</span>
+          </button>
+        </div>
+      </nav>
+    </>
   );
 };
 
-// --- Donut Chart Component (SCALED UP 200%) ---
+// --- Donut Chart Component (SCALED UP 200% + Mobile Responsive) ---
 const DonutChart = ({ percentage }) => {
   const radius = 220;
   const strokeWidth = 48;
@@ -280,7 +321,7 @@ const DonutChart = ({ percentage }) => {
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
   return (
-    <div className="relative w-[32rem] h-[32rem]">
+    <div className="relative w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-[32rem] lg:h-[32rem]">
       <svg width="100%" height="100%" viewBox="0 0 536 536" className="-rotate-90">
         <defs>
           <linearGradient id="chartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -415,14 +456,13 @@ const DashboardMain = () => {
   };
   
   const getFileIcon = (type) => {
-    const size = 56;
     switch(type) {
-      case 'folder': return <Folder size={size} className="text-cyan-400" />;
-      case 'doc': return <FileText size={size} className="text-blue-400" />;
-      case 'image': return <ImageIcon size={size} className="text-green-400" />;
-      case 'server': return <Server size={size} className="text-purple-400 dark:text-blue-500" />;
-      case 'db': return <Database size={size} className="text-orange-400" />;
-      default: return <File size={size} className="text-gray-500 dark:text-gray-400" />;
+      case 'folder': return <Folder size={24} className="sm:w-10 sm:h-10 md:w-14 md:h-14 text-cyan-400 flex-shrink-0" />;
+      case 'doc': return <FileText size={24} className="sm:w-10 sm:h-10 md:w-14 md:h-14 text-blue-400 flex-shrink-0" />;
+      case 'image': return <ImageIcon size={24} className="sm:w-10 sm:h-10 md:w-14 md:h-14 text-green-400 flex-shrink-0" />;
+      case 'server': return <Server size={24} className="sm:w-10 sm:h-10 md:w-14 md:h-14 text-purple-400 dark:text-blue-500 flex-shrink-0" />;
+      case 'db': return <Database size={24} className="sm:w-10 sm:h-10 md:w-14 md:h-14 text-orange-400 flex-shrink-0" />;
+      default: return <File size={24} className="sm:w-10 sm:h-10 md:w-14 md:h-14 text-gray-500 dark:text-gray-400 flex-shrink-0" />;
     }
   };
 
@@ -432,7 +472,7 @@ const DashboardMain = () => {
   };
 
   return (
-    <main className="flex-1 p-32 overflow-auto bg-gradient-to-b from-gray-900 via-slate-900 to-gray-900 dark:from-gray-50 dark:via-slate-50 dark:to-gray-100">
+    <main className="flex-1 p-4 sm:p-8 md:p-16 lg:p-32 overflow-auto bg-gradient-to-b from-gray-900 via-slate-900 to-gray-900 dark:from-gray-50 dark:via-slate-50 dark:to-gray-100">
       <input
         type="file" multiple ref={fileInputRef}
         onChange={handleFileChange} className="hidden"
@@ -440,42 +480,42 @@ const DashboardMain = () => {
       />
       
       {/* Header */}
-      <div className="mb-24">
+      <div className="mb-6 sm:mb-12 md:mb-16 lg:mb-24">
         {isLoading ? (
           <>
-            <div className="h-24 w-1/3 bg-gray-700/50 rounded-2xl animate-pulse mb-8"></div>
-            <div className="h-14 w-1/4 bg-gray-700/50 rounded-2xl animate-pulse"></div>
+            <div className="h-8 sm:h-16 md:h-20 lg:h-24 w-2/3 sm:w-1/2 md:w-1/3 bg-gray-700/50 rounded-xl sm:rounded-2xl animate-pulse mb-4 sm:mb-6 md:mb-8"></div>
+            <div className="h-6 sm:h-10 md:h-12 lg:h-14 w-1/2 sm:w-1/3 md:w-1/4 bg-gray-700/50 rounded-xl sm:rounded-2xl animate-pulse"></div>
           </>
         ) : (
           <>
-            <h1 className="text-9xl font-bold text-white dark:text-gray-900">
+            <h1 className="text-3xl sm:text-5xl md:text-7xl lg:text-9xl font-bold text-white dark:text-gray-900">
               Dashboard Overview
             </h1>
-            <p className="text-5xl text-gray-400 dark:text-gray-900 mt-4">{currentDate}</p>
+            <p className="text-base sm:text-2xl md:text-3xl lg:text-5xl text-gray-400 dark:text-gray-900 mt-2 sm:mt-3 md:mt-4">{currentDate}</p>
           </>
         )}
       </div>
       
       {/* Dashboard Grid (Corrected 2-over-1 layout) */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-24">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 md:gap-12 lg:gap-24">
 
         {/* --- Item 1: Quick Actions --- */}
         {isLoading ? (
           <QuickActionsSkeleton />
         ) : (
           <GlassCard>
-            <h2 className="text-7xl font-semibold text-white dark:text-gray-900 mb-16">Quick Actions</h2>
-            <div className="flex flex-col gap-10">
+            <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-7xl font-semibold text-white dark:text-gray-900 mb-4 sm:mb-8 md:mb-12 lg:mb-16">Quick Actions</h2>
+            <div className="flex flex-col gap-4 sm:gap-6 md:gap-8 lg:gap-10">
               <button 
                 onClick={handleUploadClick}
                 disabled={isUploading}
-                className="w-full flex items-center justify-center gap-8 py-12 px-14 rounded-2xl font-semibold text-5xl text-white dark:text-gray-900
+                className="w-full flex items-center justify-center gap-3 sm:gap-6 md:gap-8 py-4 sm:py-6 md:py-10 lg:py-12 px-6 sm:px-10 md:px-12 lg:px-14 rounded-lg sm:rounded-xl md:rounded-2xl font-semibold text-sm sm:text-3xl md:text-4xl lg:text-5xl text-white dark:text-gray-900 touch-manipulation
                            bg-gradient-to-r from-purple-600 to-cyan-600 dark:from-blue-600 dark:to-cyan-600
                            hover:from-purple-700 hover:to-cyan-700 dark:hover:from-blue-700 dark:hover:to-cyan-700 
                            transition-all duration-300 transform active:scale-95
                            disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isUploading ? <Loader2 size={48} className="animate-spin" /> : <UploadCloud size={48} />}
+                {isUploading ? <Loader2 size={20} className="sm:w-10 sm:h-10 md:w-12 md:h-12 animate-spin" /> : <UploadCloud size={20} className="sm:w-10 sm:h-10 md:w-12 md:h-12" />}
                 {isUploading ? 'Uploading...' : 'Upload Files'}
               </button>
             </div>
@@ -487,12 +527,12 @@ const DashboardMain = () => {
           <StorageStatusSkeleton />
         ) : (
           <GlassCard>
-            <h2 className="text-7xl font-semibold text-white dark:text-gray-900 mb-16">Storage Status</h2>
-            <div className="flex flex-col items-center gap-16">
+            <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-7xl font-semibold text-white dark:text-gray-900 mb-4 sm:mb-8 md:mb-12 lg:mb-16">Storage Status</h2>
+            <div className="flex flex-col items-center gap-6 sm:gap-10 md:gap-14 lg:gap-16">
               <DonutChart percentage={getStoragePercentage()} />
               <div className="w-full text-center">
-                <span className="text-8xl font-bold text-white dark:text-gray-900">{dashboardData?.storageUsedPretty || '0 B'}</span>
-                <span className="text-5xl text-gray-400 dark:text-gray-900"> / 100 MB Used</span>
+                <span className="text-2xl sm:text-4xl md:text-6xl lg:text-8xl font-bold text-white dark:text-gray-900">{dashboardData?.storageUsedPretty || '0 B'}</span>
+                <span className="text-base sm:text-2xl md:text-3xl lg:text-5xl text-gray-400 dark:text-gray-900"> / 100 MB Used</span>
               </div>
             </div>
           </GlassCard>
@@ -504,14 +544,15 @@ const DashboardMain = () => {
             <BackupsListSkeleton />
           ) : (
             <GlassCard>
-              <div className="flex justify-between items-center mb-16">
-                <h2 className="text-7xl font-semibold text-white dark:text-gray-900">My Backups</h2>
-                <button className="flex items-center gap-4 text-4xl text-cyan-400 hover:text-cyan-300">
-                  View All <ArrowRight size={36} />
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 md:gap-6 lg:gap-0 mb-6 sm:mb-10 md:mb-12 lg:mb-16">
+                <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-7xl font-semibold text-white dark:text-gray-900">My Backups</h2>
+                <button className="flex items-center gap-2 sm:gap-3 md:gap-4 text-sm sm:text-2xl md:text-3xl lg:text-4xl text-cyan-400 hover:text-cyan-300 touch-manipulation">
+                  View All <ArrowRight size={16} className="sm:w-6 sm:h-6 md:w-8 md:h-8 lg:w-9 lg:h-9" />
                 </button>
               </div>
               
-              <div className="grid grid-cols-12 gap-12 text-4xl text-gray-400 dark:text-gray-900 font-medium p-12 border-b-2 border-purple-500/20 dark:border-blue-500/20">
+              {/* Table Header - Hidden on mobile */}
+              <div className="hidden sm:grid grid-cols-12 gap-6 sm:gap-8 md:gap-12 text-xs sm:text-2xl md:text-3xl lg:text-4xl text-gray-400 dark:text-gray-900 font-medium p-4 sm:p-6 md:p-10 lg:p-12 border-b-2 border-purple-500/20 dark:border-blue-500/20">
                 <div className="col-span-4">Name</div>
                 <div className="col-span-2">Status</div>
                 <div className="col-span-2">Last Modified</div>
@@ -519,33 +560,33 @@ const DashboardMain = () => {
                 <div className="col-span-2 text-right">Actions</div>
               </div>
 
-              <div className="flex flex-col gap-6 mt-6">
+              <div className="flex flex-col gap-3 sm:gap-4 md:gap-6 mt-3 sm:mt-4 md:mt-6">
                 {dashboardData?.backups.map((file, index) => (
-                  <div key={index} className="grid grid-cols-12 gap-12 items-center p-12 rounded-2xl hover:bg-gray-900/70 transition-colors">
+                  <div key={index} className="grid grid-cols-1 sm:grid-cols-12 gap-3 sm:gap-6 md:gap-8 lg:gap-12 items-center p-4 sm:p-6 md:p-10 lg:p-12 rounded-lg sm:rounded-xl md:rounded-2xl hover:bg-gray-900/70 transition-colors">
                     {/* Name */}
-                    <div className="col-span-4 flex items-center gap-10">
+                    <div className="col-span-1 sm:col-span-4 flex items-center gap-3 sm:gap-6 md:gap-10">
                       {getFileIcon(file.type)}
-                      <span className="text-4xl font-medium text-white dark:text-gray-900 truncate">{file.name}</span>
+                      <span className="text-sm sm:text-2xl md:text-3xl lg:text-4xl font-medium text-white dark:text-gray-900 truncate">{file.name}</span>
                     </div>
                     {/* Status */}
-                    <div className="col-span-2">
-                      <span className={`flex items-center gap-6 text-4xl ${file.status === 'Synced' ? 'text-green-400' : 'text-yellow-400'}`}>
-                        <span className={`w-6 h-6 rounded-full ${file.status === 'Synced' ? 'bg-green-500' : 'bg-yellow-500'}`}></span>
+                    <div className="col-span-1 sm:col-span-2">
+                      <span className={`flex items-center gap-3 sm:gap-4 md:gap-6 text-xs sm:text-2xl md:text-3xl lg:text-4xl ${file.status === 'Synced' ? 'text-green-400' : 'text-yellow-400'}`}>
+                        <span className={`w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 rounded-full ${file.status === 'Synced' ? 'bg-green-500' : 'bg-yellow-500'}`}></span>
                         {file.status}
                       </span>
                     </div>
                     {/* Last Modified */}
-                    <div className="col-span-2 text-4xl text-gray-400 dark:text-gray-900">
+                    <div className="col-span-1 sm:col-span-2 text-xs sm:text-2xl md:text-3xl lg:text-4xl text-gray-400 dark:text-gray-900">
                       {file.lastModified}
                     </div>
                     {/* Size */}
-                    <div className="col-span-2 text-4xl text-gray-400 dark:text-gray-900 text-right">
+                    <div className="col-span-1 sm:col-span-2 text-xs sm:text-2xl md:text-3xl lg:text-4xl text-gray-400 dark:text-gray-900 sm:text-right">
                       {file.size}
                     </div>
                     {/* Actions Column */}
-                    <div className="col-span-2 text-right">
-                      <button className="flex items-center gap-4 py-5 px-8 rounded-2xl text-3xl text-cyan-300 bg-cyan-800/30 border-2 border-cyan-500/30 hover:bg-cyan-800/60 transition-colors">
-                        <Clock size={32} />
+                    <div className="col-span-1 sm:col-span-2 sm:text-right">
+                      <button className="w-full sm:w-auto flex items-center justify-center gap-2 sm:gap-3 md:gap-4 py-2 sm:py-4 md:py-5 px-4 sm:px-6 md:px-8 rounded-lg sm:rounded-xl md:rounded-2xl text-xs sm:text-xl md:text-2xl lg:text-3xl text-cyan-300 bg-cyan-800/30 border-2 border-cyan-500/30 hover:bg-cyan-800/60 transition-colors touch-manipulation">
+                        <Clock size={16} className="sm:w-6 sm:h-6 md:w-8 md:h-8" />
                         Restore
                       </button>
                     </div>
@@ -560,26 +601,26 @@ const DashboardMain = () => {
   );
 };
 
-// --- Files & Vault View Components ---
+// --- Files & Vault View Components (Mobile Responsive) ---
 const FilesView = ({ username, onBackupComplete }) => (
-  <main className="flex-1 p-32 overflow-auto bg-gradient-to-b from-gray-900 via-slate-900 to-gray-900 dark:from-gray-50 dark:via-slate-50 dark:to-gray-100">
-    <div className="mb-24">
-      <h1 className="text-9xl font-bold text-white dark:text-gray-900 mb-8">Browse Server Files</h1>
-      <p className="text-6xl text-gray-400 dark:text-gray-900">Navigate and backup files from your server</p>
+  <main className="flex-1 p-4 sm:p-8 md:p-16 lg:p-32 overflow-auto bg-gradient-to-b from-gray-900 via-slate-900 to-gray-900 dark:from-gray-50 dark:via-slate-50 dark:to-gray-100">
+    <div className="mb-6 sm:mb-12 md:mb-16 lg:mb-24">
+      <h1 className="text-3xl sm:text-5xl md:text-7xl lg:text-9xl font-bold text-white dark:text-gray-900 mb-2 sm:mb-4 md:mb-6 lg:mb-8">Browse Server Files</h1>
+      <p className="text-base sm:text-2xl md:text-4xl lg:text-6xl text-gray-400 dark:text-gray-900">Navigate and backup files from your server</p>
     </div>
-    <GlassCard className="h-[calc(100vh-500px)]">
+    <GlassCard className="min-h-[calc(100vh-300px)] sm:min-h-[calc(100vh-400px)] lg:h-[calc(100vh-500px)]">
       <FileBrowser username={username} onBackupComplete={onBackupComplete} />
     </GlassCard>
   </main>
 );
 
 const VaultView = ({ username, refreshTrigger }) => (
-  <main className="flex-1 p-32 overflow-auto bg-gradient-to-b from-gray-900 via-slate-900 to-gray-900 dark:from-gray-50 dark:via-slate-50 dark:to-gray-100">
-    <div className="mb-24">
-      <h1 className="text-9xl font-bold text-white dark:text-gray-900 mb-8">My Vault</h1>
-      <p className="text-6xl text-gray-400 dark:text-gray-900">View and restore your encrypted backups</p>
+  <main className="flex-1 p-4 sm:p-8 md:p-16 lg:p-32 overflow-auto bg-gradient-to-b from-gray-900 via-slate-900 to-gray-900 dark:from-gray-50 dark:via-slate-50 dark:to-gray-100">
+    <div className="mb-6 sm:mb-12 md:mb-16 lg:mb-24">
+      <h1 className="text-3xl sm:text-5xl md:text-7xl lg:text-9xl font-bold text-white dark:text-gray-900 mb-2 sm:mb-4 md:mb-6 lg:mb-8">My Vault</h1>
+      <p className="text-base sm:text-2xl md:text-4xl lg:text-6xl text-gray-400 dark:text-gray-900">View and restore your encrypted backups</p>
     </div>
-    <GlassCard className="h-[calc(100vh-500px)]">
+    <GlassCard className="min-h-[calc(100vh-300px)] sm:min-h-[calc(100vh-400px)] lg:h-[calc(100vh-500px)]">
       <BackupList username={username} refreshTrigger={refreshTrigger} />
     </GlassCard>
   </main>
@@ -589,10 +630,10 @@ const SettingsView = () => {
   const { theme, toggleTheme } = useTheme();
 
   return (
-    <main className="flex-1 p-32 overflow-auto bg-gradient-to-b from-gray-900 via-slate-900 to-gray-900 dark:from-gray-50 dark:via-slate-50 dark:to-gray-100">
-      <div className="mb-24">
-        <h1 className="text-9xl font-bold text-white dark:text-gray-900 mb-8">Settings</h1>
-        <p className="text-6xl text-gray-400 dark:text-gray-900">Configure your NimbusVault preferences</p>
+    <main className="flex-1 p-4 sm:p-8 md:p-16 lg:p-32 overflow-auto bg-gradient-to-b from-gray-900 via-slate-900 to-gray-900 dark:from-gray-50 dark:via-slate-50 dark:to-gray-100">
+      <div className="mb-6 sm:mb-12 md:mb-16 lg:mb-24">
+        <h1 className="text-3xl sm:text-5xl md:text-7xl lg:text-9xl font-bold text-white dark:text-gray-900 mb-2 sm:mb-4 md:mb-6 lg:mb-8">Settings</h1>
+        <p className="text-base sm:text-2xl md:text-4xl lg:text-6xl text-gray-400 dark:text-gray-900">Configure your NimbusVault preferences</p>
       </div>
       
       {/* Theme Toggle Card */}
@@ -645,24 +686,40 @@ const SettingsView = () => {
   );
 };
 
-// --- Dashboard Page Component (Layout) ---
+// --- Dashboard Page Component (Layout + Mobile Support) ---
 const DashboardPage = ({ username }) => {
   const [activeView, setActiveView] = useState('overview');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleBackupComplete = () => {
     setRefreshTrigger(prev => prev + 1);
   };
 
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
+  const closeSidebar = () => {
+    setSidebarOpen(false);
+  };
+
   return (
-    <div className="flex h-screen w-full text-gray-200">
-      <DashboardSidebar activeView={activeView} setActiveView={setActiveView} />
-      <div className="flex flex-col flex-1 h-screen overflow-hidden">
-        <DashboardHeader username={username} />
-        {activeView === 'overview' && <DashboardMain />}
-        {activeView === 'files' && <FilesView username={username} onBackupComplete={handleBackupComplete} />}
-        {activeView === 'vault' && <VaultView username={username} refreshTrigger={refreshTrigger} />}
-        {activeView === 'settings' && <SettingsView />}
+    <div className="flex h-screen w-full text-gray-200 overflow-hidden">
+      <DashboardSidebar 
+        activeView={activeView} 
+        setActiveView={setActiveView}
+        isOpen={sidebarOpen}
+        onClose={closeSidebar}
+      />
+      <div className="flex flex-col flex-1 h-screen overflow-hidden lg:ml-0">
+        <DashboardHeader username={username} onMenuClick={toggleSidebar} />
+        <div className="flex-1 overflow-auto">
+          {activeView === 'overview' && <DashboardMain />}
+          {activeView === 'files' && <FilesView username={username} onBackupComplete={handleBackupComplete} />}
+          {activeView === 'vault' && <VaultView username={username} refreshTrigger={refreshTrigger} />}
+          {activeView === 'settings' && <SettingsView />}
+        </div>
       </div>
     </div>
   );

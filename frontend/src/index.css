@@ -19,4 +19,10 @@
   *, *::before, *::after {
     box-sizing: inherit;
   }
+
+  /* Touch-friendly interactions for mobile */
+  button, a, input, select, textarea {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
 }
