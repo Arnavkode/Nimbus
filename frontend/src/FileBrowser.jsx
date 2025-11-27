@@ -3,6 +3,11 @@ import { Folder, File, HardDrive, Loader2, ArrowUp, UploadCloud } from 'lucide-r
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
+// DEBUG: Log what API_BASE is
+console.log('🔍 FileBrowser - VITE_API_URL:', import.meta.env.VITE_API_URL);
+console.log('🔍 FileBrowser - API_BASE:', API_BASE);
+console.log('🔍 FileBrowser - Full URL will be:', `${API_BASE}/api/files?path=.`);
+
 const FileBrowser = ({ username, onBackupComplete }) => {
   const [currentPath, setCurrentPath] = useState('.');
   const [files, setFiles] = useState([]);
@@ -14,23 +19,37 @@ const FileBrowser = ({ username, onBackupComplete }) => {
   const fetchFiles = async (path) => {
     setIsLoading(true);
     setError('');
+    
+    const fullUrl = `${API_BASE}/api/files?path=${encodeURIComponent(path)}`;
+    console.log('🚀 Fetching:', fullUrl);
+    console.log('🔍 API_BASE is:', API_BASE);
+    
     try {
-      const response = await fetch(`${API_BASE}/api/files?path=${encodeURIComponent(path)}`, {
+      const response = await fetch(fullUrl, {
         headers: {
           'ngrok-skip-browser-warning': 'true'
         }
       });
+      
+      console.log('✅ Response received:', response.status, response.statusText);
+      console.log('📍 Response URL:', response.url);
+      
       const data = await response.json();
       
       if (!response.ok) {
+        console.error('❌ Response not OK:', response.status, data);
         setError(data.message || 'Failed to load files');
         setFiles([]);
       } else {
         // Backend returns array directly, not wrapped in { files: [] }
+        console.log('✅ Data received:', data);
         setFiles(Array.isArray(data) ? data : []);
       }
     } catch (err) {
-      setError('Failed to connect to server');
+      console.error('❌ Fetch error:', err);
+      console.error('❌ Error message:', err.message);
+      console.error('❌ Error stack:', err.stack);
+      setError(`Failed to connect: ${err.message}`);
       setFiles([]);
     } finally {
       setIsLoading(false);
