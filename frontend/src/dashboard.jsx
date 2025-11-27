@@ -3,8 +3,9 @@ import {
   User, ChevronDown, Plus, UploadCloud, 
   File, Folder, Settings, LogOut, FileText, ImageIcon, 
   Search, HardDrive, FolderPlus, Clock, CheckCircle, AlertTriangle, ArrowRight,
-  Database, Server, Loader2, LayoutDashboard, Archive
+  Database, Server, Loader2, LayoutDashboard, Archive, Sun, Moon
 } from 'lucide-react';
+import { useTheme } from './ThemeContext';
 import FileBrowser from './FileBrowser';
 import BackupList from './BackupList';
 
@@ -17,17 +18,24 @@ const api = {
     if (!uid) throw new Error('No user ID found');
     
     try {
-      // Fetch backups from real API
-      const response = await fetch(`${API_BASE}/backups?uid=${uid}`);
-      const backups = await response.json();
+      // Fetch backups and storage in parallel
+      const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+      const [backupsResponse, storageResponse] = await Promise.all([
+        fetch(`${API_BASE}/backups?uid=${uid}`),
+        fetch(`${baseUrl}/api/storage/${uid}`)
+      ]);
       
-      // Calculate storage (you can enhance this with real data later)
-      const totalSize = backups.reduce((sum, backup) => sum + (backup.fsize || 0), 0);
-      const storageUsed = Math.round(totalSize / (1024 * 1024 * 1024)); // Convert to GB
+      const backups = await backupsResponse.json();
+      const storageData = await storageResponse.json();
+      
+      // Get storage used from the endpoint (convert bytes to GB)
+      const storageUsedGB = storageData.usedBytes ? (storageData.usedBytes / (1024 * 1024 * 1024)) : 0;
+      const storageUsedPretty = storageData.usedPretty || '0 B';
       
       return {
-        storageUsed,
-        storageTotal: 1024, // You can make this dynamic later
+        storageUsed: storageUsedGB,
+        storageUsedPretty: storageUsedPretty,
+        storageTotal: 100 / 1024, // 100 MB in GB
         backups: backups.map(backup => ({
           id: backup.fid,
           name: backup.fname,
@@ -39,7 +47,7 @@ const api = {
       };
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
-      return { storageUsed: 0, storageTotal: 1024, backups: [] };
+      return { storageUsed: 0, storageUsedPretty: '0 B', storageTotal: 100 / 1024, backups: [] };
     }
   },
   
@@ -112,17 +120,17 @@ const DashboardHeader = ({ username }) => {
   };
 
   return (
-    <header className="flex items-center p-12 h-48 bg-black/20 backdrop-blur-lg border-b border-white/10 sticky top-0 z-30">
+    <header className="flex items-center p-12 h-48 bg-black/20 dark:bg-white/20 backdrop-blur-lg border-b border-white/10 dark:border-gray-300/20 sticky top-0 z-30">
       {/* Middle: Search */}
       <div className="relative w-full max-w-6xl mx-auto">
         <span className="absolute inset-y-0 left-0 flex items-center pl-10">
-          <Search size={48} className="text-gray-400" />
+          <Search size={48} className="text-gray-400 dark:text-gray-900" />
         </span>
         <input
           type="text"
           placeholder="Search files and folders..."
-          className="w-full pl-28 pr-10 py-8 bg-gray-900/50 border-2 border-gray-700 rounded-2xl text-4xl text-gray-200
-                   focus:outline-none focus:ring-4 focus:ring-cyan-500 focus:border-cyan-500 transition-all"
+        className="w-full pl-28 pr-10 py-8 bg-gray-900/50 dark:bg-white/50 border-2 border-gray-700 dark:border-gray-300 rounded-2xl text-4xl text-gray-200 dark:text-gray-900
+                 focus:outline-none focus:ring-4 focus:ring-cyan-500 focus:border-cyan-500 transition-all"
         />
       </div>
 
@@ -133,8 +141,8 @@ const DashboardHeader = ({ username }) => {
           className="flex items-center gap-6 px-8 py-4 rounded-2xl hover:bg-white/5 transition-all"
         >
           <User size={64} className="rounded-full bg-cyan-800 p-4" />
-          <span className="text-4xl text-gray-300 hidden md:block">{username}</span>
-          <ChevronDown size={48} className={`text-gray-500 transition-transform ${showDropdown ? 'rotate-180' : ''}`} />
+          <span className="text-4xl text-gray-300 dark:text-gray-900 hidden md:block">{username}</span>
+          <ChevronDown size={48} className={`text-gray-500 dark:text-gray-900 transition-transform ${showDropdown ? 'rotate-180' : ''}`} />
         </button>
 
         {/* Dropdown Menu */}
@@ -147,14 +155,14 @@ const DashboardHeader = ({ username }) => {
             />
             
             {/* Dropdown Content */}
-            <div className="absolute right-0 top-full mt-4 w-96 rounded-2xl shadow-2xl bg-black/40 backdrop-blur-xl border-2 border-white/20 overflow-hidden z-50">
+            <div className="absolute right-0 top-full mt-4 w-96 rounded-2xl shadow-2xl bg-black/40 dark:bg-white/40 backdrop-blur-xl border-2 border-white/20 dark:border-gray-300/20 overflow-hidden z-50">
               {/* User Info Section */}
               <div className="px-8 py-6 border-b border-white/10">
                 <div className="flex items-center gap-4 mb-2">
                   <User size={48} className="rounded-full bg-cyan-800 p-3" />
                   <div>
-                    <p className="text-3xl font-semibold text-white">{username}</p>
-                    <p className="text-2xl text-gray-400">Logged in</p>
+                    <p className="text-3xl font-semibold text-white dark:text-gray-900">{username}</p>
+                    <p className="text-2xl text-gray-400 dark:text-gray-900">Logged in</p>
                   </div>
                 </div>
               </div>
@@ -166,7 +174,7 @@ const DashboardHeader = ({ username }) => {
                     setShowDropdown(false);
                     // Navigate to settings if needed
                   }}
-                  className="w-full flex items-center gap-6 px-8 py-6 text-gray-300 hover:bg-white/5 transition-all text-left"
+                  className="w-full flex items-center gap-6 px-8 py-6 text-gray-300 dark:text-gray-900 hover:bg-white/5 dark:hover:bg-gray-900/5 transition-all text-left"
                 >
                   <Settings size={40} />
                   <span className="text-3xl">Settings</span>
@@ -174,7 +182,7 @@ const DashboardHeader = ({ username }) => {
 
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center gap-6 px-8 py-6 text-red-400 hover:bg-red-500/10 transition-all text-left"
+                  className="w-full flex items-center gap-6 px-8 py-6 text-red-400 dark:text-red-600 hover:bg-red-500/10 transition-all text-left"
                 >
                   <LogOut size={40} />
                   <span className="text-3xl font-medium">Logout</span>
@@ -195,8 +203,8 @@ const DashboardSidebar = ({ activeView, setActiveView }) => {
       onClick={onClick}
       className={`flex items-center w-full gap-10 px-12 py-10 rounded-2xl transition-colors
       ${active 
-        ? 'bg-gradient-to-r from-purple-700/30 to-cyan-600/20 text-cyan-300 border-2 border-purple-500/30' 
-        : 'text-gray-300 hover:bg-white/10 hover:text-white'
+        ? 'bg-gradient-to-r from-purple-700/30 to-cyan-600/20 dark:from-blue-500/30 dark:to-cyan-500/20 text-cyan-300 dark:text-cyan-700 border-2 border-purple-500/30 dark:border-blue-500/30' 
+        : 'text-gray-300 dark:text-gray-900 hover:bg-white/10 dark:hover:bg-gray-900/10 hover:text-white dark:hover:text-gray-900'
       }`}
     >
       {React.cloneElement(icon, { size: 56 })}
@@ -205,11 +213,11 @@ const DashboardSidebar = ({ activeView, setActiveView }) => {
   );
 
   return (
-    <nav className="w-[48rem] p-16 bg-black/20 backdrop-blur-lg border-r border-white/10 flex flex-col gap-12 flex-shrink-0">
+    <nav className="w-[48rem] p-16 bg-black/20 dark:bg-white/20 backdrop-blur-lg border-r border-white/10 dark:border-gray-300/20 flex flex-col gap-12 flex-shrink-0">
       {/* Brand */}
       <div className="flex items-center gap-8 mb-8 px-4">
         <NimbusVaultLogo />
-        <span className="text-6xl font-bold text-white">NimbusVault</span>
+        <span className="text-6xl font-bold text-white dark:text-gray-900">NimbusVault</span>
       </div>
       
       {/* Navigation */}
@@ -244,7 +252,7 @@ const DashboardSidebar = ({ activeView, setActiveView }) => {
       <div className="mt-auto">
         <button
           onClick={api.logout}
-          className="flex items-center w-full gap-10 px-12 py-10 rounded-2xl text-gray-400 hover:bg-red-800/20 hover:text-red-400 transition-colors"
+          className="flex items-center w-full gap-10 px-12 py-10 rounded-2xl text-gray-400 dark:text-gray-900 hover:bg-red-800/20 dark:hover:bg-red-600/20 hover:text-red-400 dark:hover:text-red-600 transition-colors"
         >
           <LogOut size={56} />
           <span className="text-4xl font-medium">Logout</span>
@@ -276,7 +284,7 @@ const DonutChart = ({ percentage }) => {
         <circle
           cx="268" cy="268" r={innerRadius} fill="none"
           strokeWidth={strokeWidth}
-          className="text-gray-700/50"
+          className="text-gray-700/50 dark:text-gray-300/50"
         />
         <circle
           cx="268" cy="268" r={innerRadius} fill="none"
@@ -289,7 +297,7 @@ const DonutChart = ({ percentage }) => {
         />
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-9xl font-semibold text-white">{percentage}%</span>
+        <span className="text-9xl font-semibold text-white dark:text-gray-900">{percentage}%</span>
       </div>
     </div>
   );
@@ -298,7 +306,7 @@ const DonutChart = ({ percentage }) => {
 // --- Reusable Card Component (SCALED UP 200%) ---
 const GlassCard = ({ children, className = '' }) => (
   <div className={`rounded-[3rem] shadow-2xl animated-gradient-bg p-2 ${className}`}>
-    <div className="bg-black/30 backdrop-blur-lg rounded-[2.5rem] p-24 h-full">
+    <div className="bg-black/30 dark:bg-white/30 backdrop-blur-lg rounded-[2.5rem] p-24 h-full">
       {children}
     </div>
   </div>
@@ -404,9 +412,9 @@ const DashboardMain = () => {
       case 'folder': return <Folder size={size} className="text-cyan-400" />;
       case 'doc': return <FileText size={size} className="text-blue-400" />;
       case 'image': return <ImageIcon size={size} className="text-green-400" />;
-      case 'server': return <Server size={size} className="text-purple-400" />;
+      case 'server': return <Server size={size} className="text-purple-400 dark:text-blue-500" />;
       case 'db': return <Database size={size} className="text-orange-400" />;
-      default: return <File size={size} className="text-gray-500" />;
+      default: return <File size={size} className="text-gray-500 dark:text-gray-400" />;
     }
   };
 
@@ -416,7 +424,7 @@ const DashboardMain = () => {
   };
 
   return (
-    <main className="flex-1 p-32 overflow-auto bg-gradient-to-b from-gray-900 via-slate-900 to-gray-900">
+    <main className="flex-1 p-32 overflow-auto bg-gradient-to-b from-gray-900 via-slate-900 to-gray-900 dark:from-gray-50 dark:via-slate-50 dark:to-gray-100">
       <input
         type="file" multiple ref={fileInputRef}
         onChange={handleFileChange} className="hidden"
@@ -432,10 +440,10 @@ const DashboardMain = () => {
           </>
         ) : (
           <>
-            <h1 className="text-9xl font-bold text-white">
+            <h1 className="text-9xl font-bold text-white dark:text-gray-900">
               Dashboard Overview
             </h1>
-            <p className="text-5xl text-gray-400 mt-4">{currentDate}</p>
+            <p className="text-5xl text-gray-400 dark:text-gray-900 mt-4">{currentDate}</p>
           </>
         )}
       </div>
@@ -448,14 +456,14 @@ const DashboardMain = () => {
           <QuickActionsSkeleton />
         ) : (
           <GlassCard>
-            <h2 className="text-7xl font-semibold text-white mb-16">Quick Actions</h2>
+            <h2 className="text-7xl font-semibold text-white dark:text-gray-900 mb-16">Quick Actions</h2>
             <div className="flex flex-col gap-10">
               <button 
                 onClick={handleUploadClick}
                 disabled={isUploading}
-                className="w-full flex items-center justify-center gap-8 py-12 px-14 rounded-2xl font-semibold text-5xl text-white 
-                           bg-gradient-to-r from-purple-600 to-cyan-600 
-                           hover:from-purple-700 hover:to-cyan-700 
+                className="w-full flex items-center justify-center gap-8 py-12 px-14 rounded-2xl font-semibold text-5xl text-white dark:text-gray-900
+                           bg-gradient-to-r from-purple-600 to-cyan-600 dark:from-blue-600 dark:to-cyan-600
+                           hover:from-purple-700 hover:to-cyan-700 dark:hover:from-blue-700 dark:hover:to-cyan-700 
                            transition-all duration-300 transform active:scale-95
                            disabled:opacity-50 disabled:cursor-not-allowed"
               >
@@ -471,12 +479,12 @@ const DashboardMain = () => {
           <StorageStatusSkeleton />
         ) : (
           <GlassCard>
-            <h2 className="text-7xl font-semibold text-white mb-16">Storage Status</h2>
+            <h2 className="text-7xl font-semibold text-white dark:text-gray-900 mb-16">Storage Status</h2>
             <div className="flex flex-col items-center gap-16">
               <DonutChart percentage={getStoragePercentage()} />
               <div className="w-full text-center">
-                <span className="text-8xl font-bold text-white">{dashboardData?.storageUsed} GB</span>
-                <span className="text-5xl text-gray-400"> / {dashboardData?.storageTotal} GB Used</span>
+                <span className="text-8xl font-bold text-white dark:text-gray-900">{dashboardData?.storageUsedPretty || '0 B'}</span>
+                <span className="text-5xl text-gray-400 dark:text-gray-900"> / 100 MB Used</span>
               </div>
             </div>
           </GlassCard>
@@ -489,13 +497,13 @@ const DashboardMain = () => {
           ) : (
             <GlassCard>
               <div className="flex justify-between items-center mb-16">
-                <h2 className="text-7xl font-semibold text-white">My Backups</h2>
+                <h2 className="text-7xl font-semibold text-white dark:text-gray-900">My Backups</h2>
                 <button className="flex items-center gap-4 text-4xl text-cyan-400 hover:text-cyan-300">
                   View All <ArrowRight size={36} />
                 </button>
               </div>
               
-              <div className="grid grid-cols-12 gap-12 text-4xl text-gray-400 font-medium p-12 border-b-2 border-purple-500/20">
+              <div className="grid grid-cols-12 gap-12 text-4xl text-gray-400 dark:text-gray-900 font-medium p-12 border-b-2 border-purple-500/20 dark:border-blue-500/20">
                 <div className="col-span-4">Name</div>
                 <div className="col-span-2">Status</div>
                 <div className="col-span-2">Last Modified</div>
@@ -509,7 +517,7 @@ const DashboardMain = () => {
                     {/* Name */}
                     <div className="col-span-4 flex items-center gap-10">
                       {getFileIcon(file.type)}
-                      <span className="text-4xl font-medium text-white truncate">{file.name}</span>
+                      <span className="text-4xl font-medium text-white dark:text-gray-900 truncate">{file.name}</span>
                     </div>
                     {/* Status */}
                     <div className="col-span-2">
@@ -519,11 +527,11 @@ const DashboardMain = () => {
                       </span>
                     </div>
                     {/* Last Modified */}
-                    <div className="col-span-2 text-4xl text-gray-400">
+                    <div className="col-span-2 text-4xl text-gray-400 dark:text-gray-900">
                       {file.lastModified}
                     </div>
                     {/* Size */}
-                    <div className="col-span-2 text-4xl text-gray-400 text-right">
+                    <div className="col-span-2 text-4xl text-gray-400 dark:text-gray-900 text-right">
                       {file.size}
                     </div>
                     {/* Actions Column */}
@@ -546,10 +554,10 @@ const DashboardMain = () => {
 
 // --- Files & Vault View Components ---
 const FilesView = ({ username, onBackupComplete }) => (
-  <main className="flex-1 p-32 overflow-auto bg-gradient-to-b from-gray-900 via-slate-900 to-gray-900">
+  <main className="flex-1 p-32 overflow-auto bg-gradient-to-b from-gray-900 via-slate-900 to-gray-900 dark:from-gray-50 dark:via-slate-50 dark:to-gray-100">
     <div className="mb-24">
-      <h1 className="text-9xl font-bold text-white mb-8">Browse Server Files</h1>
-      <p className="text-6xl text-gray-400">Navigate and backup files from your server</p>
+      <h1 className="text-9xl font-bold text-white dark:text-gray-900 mb-8">Browse Server Files</h1>
+      <p className="text-6xl text-gray-400 dark:text-gray-900">Navigate and backup files from your server</p>
     </div>
     <GlassCard className="h-[calc(100vh-500px)]">
       <FileBrowser username={username} onBackupComplete={onBackupComplete} />
@@ -558,10 +566,10 @@ const FilesView = ({ username, onBackupComplete }) => (
 );
 
 const VaultView = ({ username, refreshTrigger }) => (
-  <main className="flex-1 p-32 overflow-auto bg-gradient-to-b from-gray-900 via-slate-900 to-gray-900">
+  <main className="flex-1 p-32 overflow-auto bg-gradient-to-b from-gray-900 via-slate-900 to-gray-900 dark:from-gray-50 dark:via-slate-50 dark:to-gray-100">
     <div className="mb-24">
-      <h1 className="text-9xl font-bold text-white mb-8">My Vault</h1>
-      <p className="text-6xl text-gray-400">View and restore your encrypted backups</p>
+      <h1 className="text-9xl font-bold text-white dark:text-gray-900 mb-8">My Vault</h1>
+      <p className="text-6xl text-gray-400 dark:text-gray-900">View and restore your encrypted backups</p>
     </div>
     <GlassCard className="h-[calc(100vh-500px)]">
       <BackupList username={username} refreshTrigger={refreshTrigger} />
@@ -569,20 +577,65 @@ const VaultView = ({ username, refreshTrigger }) => (
   </main>
 );
 
-const SettingsView = () => (
-  <main className="flex-1 p-32 overflow-auto bg-gradient-to-b from-gray-900 via-slate-900 to-gray-900">
-    <div className="mb-24">
-      <h1 className="text-9xl font-bold text-white mb-8">Settings</h1>
-      <p className="text-6xl text-gray-400">Configure your NimbusVault preferences</p>
-    </div>
-    <GlassCard>
-      <div className="text-center py-48">
-        <Settings size={160} className="text-gray-500 mx-auto mb-16" />
-        <p className="text-6xl text-gray-400">Settings coming soon...</p>
+const SettingsView = () => {
+  const { theme, toggleTheme } = useTheme();
+
+  return (
+    <main className="flex-1 p-32 overflow-auto bg-gradient-to-b from-gray-900 via-slate-900 to-gray-900 dark:from-gray-50 dark:via-slate-50 dark:to-gray-100">
+      <div className="mb-24">
+        <h1 className="text-9xl font-bold text-white dark:text-gray-900 mb-8">Settings</h1>
+        <p className="text-6xl text-gray-400 dark:text-gray-900">Configure your NimbusVault preferences</p>
       </div>
-    </GlassCard>
-  </main>
-);
+      
+      {/* Theme Toggle Card */}
+      <GlassCard className="mb-12">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-8">
+            {theme === 'dark' ? (
+              <Moon size={80} className="text-cyan-400" />
+            ) : (
+              <Sun size={80} className="text-yellow-500" />
+            )}
+            <div>
+              <h2 className="text-6xl font-semibold text-white dark:text-gray-900 mb-2">Theme</h2>
+              <p className="text-4xl text-gray-400 dark:text-gray-900">
+                Current theme: <span className="font-bold capitalize">{theme}</span>
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={toggleTheme}
+            className="flex items-center gap-6 px-16 py-10 rounded-2xl text-4xl font-semibold
+                     bg-gradient-to-r from-purple-600 to-cyan-600 dark:from-blue-600 dark:to-cyan-600 text-white
+                     hover:from-purple-500 hover:to-cyan-500 dark:hover:from-blue-500 dark:hover:to-cyan-500 
+                     transition-all transform active:scale-95"
+          >
+            {theme === 'light' ? 
+            (
+              <>
+                <Sun size={48} />
+                Switch to Light Mode
+              </>
+            ):(
+              <>
+                <Moon size={48} />
+                Switch to Dark Mode
+              </>
+            )  }
+          </button>
+        </div>
+      </GlassCard>
+
+      {/* Other Settings Placeholder */}
+      <GlassCard>
+        <div className="text-center py-48">
+          <Settings size={160} className="text-gray-500 dark:text-gray-900 mx-auto mb-16" />
+          <p className="text-6xl text-gray-400 dark:text-gray-900">More settings coming soon...</p>
+        </div>
+      </GlassCard>
+    </main>
+  );
+};
 
 // --- Dashboard Page Component (Layout) ---
 const DashboardPage = ({ username }) => {

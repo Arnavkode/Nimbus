@@ -107,21 +107,21 @@ const FileBrowser = ({ username, onBackupComplete }) => {
     if (item.type === 'directory') {
       return <Folder size={64} className="text-cyan-400" />;
     }
-    return <File size={64} className="text-gray-400" />;
+    return <File size={64} className="text-gray-400 dark:text-gray-900" />;
   };
 
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
       <div className="mb-16">
-        <h2 className="text-8xl font-semibold text-white mb-6">Local Files</h2>
-        <p className="text-5xl text-gray-400">Browse and backup server files</p>
+        <h2 className="text-8xl font-semibold text-white dark:text-gray-900 mb-6">Local Files</h2>
+        <p className="text-5xl text-gray-400 dark:text-gray-900">Browse and backup server files</p>
       </div>
 
       {/* Current Path Display */}
       <div className="mb-12 flex items-center gap-6">
-        <HardDrive size={56} className="text-purple-400" />
-        <span className="text-4xl text-gray-300 font-mono">
+        <HardDrive size={56} className="text-purple-400 dark:text-blue-500" />
+        <span className="text-4xl text-gray-300 dark:text-gray-900 font-mono">
           {currentPath === '.' ? '~/' : `~/${currentPath}`}
         </span>
       </div>
@@ -132,8 +132,8 @@ const FileBrowser = ({ username, onBackupComplete }) => {
           onClick={handleGoUp}
           disabled={isAtRoot || isLoading}
           className="flex items-center gap-6 px-12 py-8 rounded-2xl text-4xl font-medium
-                   bg-gray-800/50 text-gray-300 border-2 border-gray-700
-                   hover:bg-gray-700/50 hover:border-gray-600 transition-all
+                   bg-gray-800/50 dark:bg-gray-200/50 text-gray-300 dark:text-gray-900 border-2 border-gray-700 dark:border-gray-400
+                   hover:bg-gray-700/50 dark:hover:bg-gray-300/50 hover:border-gray-600 dark:hover:border-gray-500 transition-all
                    disabled:opacity-40 disabled:cursor-not-allowed"
         >
           <ArrowUp size={48} />
@@ -143,7 +143,7 @@ const FileBrowser = ({ username, onBackupComplete }) => {
 
       {/* Error Message */}
       {error && (
-        <div className="mb-12 p-8 bg-red-500/20 text-red-300 rounded-2xl border-2 border-red-500/30 text-4xl">
+        <div className="mb-12 p-8 bg-red-500/20 dark:bg-red-100/50 text-red-300 dark:text-red-900 rounded-2xl border-2 border-red-500/30 dark:border-red-400/30 text-4xl">
           {error}
         </div>
       )}
@@ -155,7 +155,7 @@ const FileBrowser = ({ username, onBackupComplete }) => {
             <Loader2 size={96} className="text-cyan-400 animate-spin" />
           </div>
         ) : files.length === 0 ? (
-          <div className="text-center py-32 text-gray-500 text-5xl">
+          <div className="text-center py-32 text-gray-500 dark:text-gray-900 text-5xl">
             No files or folders found
           </div>
         ) : (
@@ -164,7 +164,7 @@ const FileBrowser = ({ username, onBackupComplete }) => {
               <div
                 key={index}
                 className="flex items-center justify-between p-12 rounded-3xl 
-                         bg-black/20 hover:bg-black/40 border-2 border-white/10 
+                         bg-black/20 dark:bg-white/20 hover:bg-black/40 dark:hover:bg-white/40 border-2 border-white/10 dark:border-gray-300/20 
                          transition-all group"
               >
                 {/* Left: Icon + Name */}
@@ -175,10 +175,10 @@ const FileBrowser = ({ username, onBackupComplete }) => {
                 >
                   {getIcon(item)}
                   <div className="flex-1 min-w-0">
-                    <div className="text-white font-medium truncate text-5xl">
+                    <div className="text-white dark:text-gray-900 font-medium truncate text-5xl">
                       {item.name}
                     </div>
-                    <div className="text-3xl text-gray-500 mt-2">
+                    <div className="text-3xl text-gray-500 dark:text-gray-700 mt-2">
                       {item.type === 'directory' ? 'Folder' : 'File'}
                       {item.size && ` • ${formatSize(item.size)}`}
                     </div>
@@ -190,8 +190,8 @@ const FileBrowser = ({ username, onBackupComplete }) => {
                   onClick={() => handleBackup(item)}
                   disabled={backingUp === item.path}
                   className="ml-12 flex items-center gap-6 px-12 py-6 rounded-2xl text-4xl font-medium
-                           bg-gradient-to-r from-purple-600/80 to-cyan-600/80
-                           hover:from-purple-600 hover:to-cyan-600
+                           bg-gradient-to-r from-purple-600/80 to-cyan-600/80 dark:from-blue-600/80 dark:to-cyan-600/80
+                           hover:from-purple-600 hover:to-cyan-600 dark:hover:from-blue-600 dark:hover:to-cyan-600
                            text-white transition-all transform active:scale-95
                            disabled:opacity-50 disabled:cursor-not-allowed"
                 >

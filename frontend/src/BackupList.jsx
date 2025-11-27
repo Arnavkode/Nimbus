@@ -148,23 +148,23 @@ const BackupList = ({ username, refreshTrigger }) => {
       {/* Password Modal */}
       {showPasswordModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="relative w-full max-w-4xl mx-8 rounded-3xl shadow-2xl bg-gradient-to-br from-purple-900/40 to-cyan-900/40 p-2">
-            <div className="bg-black/40 backdrop-blur-xl rounded-3xl p-16 border-2 border-white/20">
+          <div className="relative w-full max-w-4xl mx-8 rounded-3xl shadow-2xl bg-gradient-to-br from-purple-900/40 to-cyan-900/40 dark:from-blue-900/40 dark:to-cyan-900/40 p-2">
+            <div className="bg-black/40 dark:bg-white/40 backdrop-blur-xl rounded-3xl p-16 border-2 border-white/20 dark:border-gray-300/20">
               {/* Close Button */}
               <button
                 onClick={handleModalClose}
-                className="absolute top-8 right-8 text-gray-400 hover:text-white transition-colors"
+                className="absolute top-8 right-8 text-gray-400 dark:text-gray-900 hover:text-white dark:hover:text-gray-900 transition-colors"
               >
                 <X size={48} />
               </button>
 
               {/* Header */}
               <div className="text-center mb-12">
-                <div className="inline-flex items-center justify-center w-32 h-32 rounded-full bg-gradient-to-br from-purple-600 to-cyan-600 mb-8">
+                <div className="inline-flex items-center justify-center w-32 h-32 rounded-full bg-gradient-to-br from-purple-600 to-cyan-600 dark:from-blue-600 dark:to-cyan-600 mb-8">
                   <Lock size={64} className="text-white" />
                 </div>
-                <h2 className="text-7xl font-bold text-white mb-4">Restore Backup</h2>
-                <p className="text-4xl text-gray-400">Enter your password to decrypt and restore</p>
+                <h2 className="text-7xl font-bold text-white dark:text-gray-900 mb-4">Restore Backup</h2>
+                <p className="text-4xl text-gray-400 dark:text-gray-900">Enter your password to decrypt and restore</p>
                 {selectedBackup && (
                   <p className="text-3xl text-cyan-400 mt-4 font-mono">{selectedBackup.fname}</p>
                 )}
@@ -172,11 +172,11 @@ const BackupList = ({ username, refreshTrigger }) => {
 
               {/* Password Input */}
               <div className="mb-12">
-                <label htmlFor="restore-password" className="block text-3xl text-gray-300 mb-4">
+                <label htmlFor="restore-password" className="block text-3xl text-gray-300 dark:text-gray-900 mb-4">
                   Password
                 </label>
                 <div className="relative">
-                  <Lock size={40} className="absolute left-8 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <Lock size={40} className="absolute left-8 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-900" />
                   <input
                     id="restore-password"
                     type="password"
@@ -186,7 +186,7 @@ const BackupList = ({ username, refreshTrigger }) => {
                     placeholder="Enter your password..."
                     autoFocus
                     className="w-full pl-24 pr-8 py-8 text-4xl bg-black/30 border-2 border-white/20 
-                             rounded-2xl text-white placeholder-gray-500
+                             rounded-2xl text-white dark:text-gray-900 placeholder-gray-500 dark:placeholder-gray-400
                              focus:outline-none focus:ring-4 focus:ring-cyan-500 focus:border-cyan-500 
                              transition-all"
                   />
@@ -198,8 +198,8 @@ const BackupList = ({ username, refreshTrigger }) => {
                 <button
                   onClick={handleModalClose}
                   className="flex-1 px-12 py-8 text-4xl font-semibold rounded-2xl
-                           bg-gray-700/50 text-gray-300 border-2 border-gray-600
-                           hover:bg-gray-600/50 hover:border-gray-500 transition-all"
+                           bg-gray-700/50 dark:bg-gray-200/50 text-gray-300 dark:text-gray-900 border-2 border-gray-600 dark:border-gray-400
+                           hover:bg-gray-600/50 dark:hover:bg-gray-300/50 hover:border-gray-500 dark:hover:border-gray-500 transition-all"
                 >
                   Cancel
                 </button>
@@ -225,13 +225,13 @@ const BackupList = ({ username, refreshTrigger }) => {
         {/* Header */}
         <div className="mb-16">
           <h2 className="text-8xl font-semibold text-white mb-6">My Vault</h2>
-          <p className="text-5xl text-gray-400">Your backed up files and folders</p>
+          <p className="text-5xl text-gray-400 dark:text-gray-900">Your backed up files and folders</p>
         </div>
 
       {/* Stats */}
       <div className="mb-12 flex items-center gap-6">
         <Package size={56} className="text-green-400" />
-        <span className="text-4xl text-gray-300">
+        <span className="text-4xl text-gray-300 dark:text-gray-900">
           {backups.length} backup{backups.length !== 1 ? 's' : ''} available
         </span>
       </div>
@@ -252,25 +252,25 @@ const BackupList = ({ username, refreshTrigger }) => {
           </div>
         ) : backups.length === 0 ? (
           <div className="text-center py-32">
-            <Package size={128} className="text-gray-600 mx-auto mb-12" />
-            <p className="text-gray-500 text-6xl">No backups yet</p>
-            <p className="text-gray-600 text-4xl mt-6">Use the file browser to create your first backup</p>
+            <Package size={128} className="text-gray-600 dark:text-gray-900 mx-auto mb-12" />
+            <p className="text-gray-500 dark:text-gray-900 text-6xl">No backups yet</p>
+            <p className="text-gray-600 dark:text-gray-900 text-4xl mt-6">Use the file browser to create your first backup</p>
           </div>
         ) : (
           <div className="space-y-8">
             {backups.map((backup) => (
               <div
                 key={backup.fid}
-                className="p-14 rounded-3xl bg-black/20 border-2 border-white/10 
-                         hover:bg-black/30 hover:border-white/20 transition-all"
+                    className="p-14 rounded-3xl bg-black/20 dark:bg-white/20 border-2 border-white/10 dark:border-gray-300/20 
+                         hover:bg-black/30 dark:hover:bg-white/30 hover:border-white/20 dark:hover:border-gray-300/30 transition-all"
               >
                 {/* Top Row: Name + Restore Button */}
                 <div className="flex items-start justify-between gap-12 mb-8">
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-6xl font-semibold text-white truncate mb-4">
+                    <h3 className="text-6xl font-semibold text-white dark:text-gray-900 truncate mb-4">
                       {backup.fname || 'Unnamed Backup'}
                     </h3>
-                    <div className="flex items-center gap-10 text-4xl text-gray-400">
+                    <div className="flex items-center gap-10 text-4xl text-gray-400 dark:text-gray-900">
                       <span className="flex items-center gap-4">
                         <Clock size={36} />
                         {formatDate(backup.fsavedtime)}
@@ -305,7 +305,7 @@ const BackupList = ({ username, refreshTrigger }) => {
 
                 {/* Additional Info */}
                 {backup.fpath && (
-                  <div className="text-3xl text-gray-500 font-mono truncate">
+                  <div className="text-3xl text-gray-500 dark:text-gray-900 font-mono truncate">
                     Path: {backup.fpath}
                   </div>
                 )}

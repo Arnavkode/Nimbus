@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { ThemeProvider } from './ThemeContext.jsx';
 import App from './App.jsx' // This is your Login page
 import Dashboard from './dashboard.jsx' // Your new dashboard page
 import './index.css'
@@ -17,9 +18,11 @@ const router = createBrowserRouter([
   },
 ]);
 
-// 2. Tell React to use the router
+// 2. Tell React to use the router with ThemeProvider
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <ThemeProvider>
+      <RouterProvider router={router} />
+    </ThemeProvider>
   </React.StrictMode>,
 )
