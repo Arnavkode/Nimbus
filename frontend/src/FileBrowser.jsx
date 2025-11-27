@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Folder, File, HardDrive, Loader2, ArrowUp, UploadCloud } from 'lucide-react';
 
-const API_BASE = import.meta.env.VITE_API_URL;
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
 const FileBrowser = ({ username, onBackupComplete }) => {
   const [currentPath, setCurrentPath] = useState('.');
@@ -15,7 +15,11 @@ const FileBrowser = ({ username, onBackupComplete }) => {
     setIsLoading(true);
     setError('');
     try {
-      const response = await fetch(`${API_BASE}/api/files?path=${encodeURIComponent(path)}`);
+      const response = await fetch(`${API_BASE}/api/files?path=${encodeURIComponent(path)}`, {
+        headers: {
+          'ngrok-skip-browser-warning': 'true'
+        }
+      });
       const data = await response.json();
       
       if (!response.ok) {
@@ -60,7 +64,10 @@ const FileBrowser = ({ username, onBackupComplete }) => {
       // Use the full absolute path from the backend for backup
       const response = await fetch(`${API_BASE}/api/save`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'ngrok-skip-browser-warning': 'true'
+        },
         body: JSON.stringify({
           path: item.path,  // Backend gave us the full path
           username: username

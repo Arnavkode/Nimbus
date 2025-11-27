@@ -101,7 +101,7 @@ export default function App() {
     }
 
     setIsLoading(true);
-    const API_BASE = import.meta.env.VITE_API_URL;
+    const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8080';
     const endpoint = isLoginMode 
       ? `${API_BASE}/api/login` 
       : `${API_BASE}/api/register`;
@@ -110,7 +110,10 @@ export default function App() {
     try {
       const response = await fetch(endpoint, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'ngrok-skip-browser-warning': 'true'
+        },
         body: JSON.stringify(body),
       });
 

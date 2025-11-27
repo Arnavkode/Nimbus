@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, Download, Loader2, Package, AlertCircle, X, Lock } from 'lucide-react';
 
-const API_BASE = import.meta.env.VITE_API_URL;
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
 const BackupList = ({ username, refreshTrigger }) => {
   const [backups, setBackups] = useState([]);
@@ -26,7 +26,11 @@ const BackupList = ({ username, refreshTrigger }) => {
         return;
       }
 
-      const response = await fetch(`${API_BASE}/api/backups?uid=${uid}`);
+      const response = await fetch(`${API_BASE}/api/backups?uid=${uid}`, {
+        headers: {
+          'ngrok-skip-browser-warning': 'true'
+        }
+      });
       const data = await response.json();
       
       if (!response.ok) {
@@ -70,7 +74,10 @@ const BackupList = ({ username, refreshTrigger }) => {
     try {
       const response = await fetch(`${API_BASE}/api/restore`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'ngrok-skip-browser-warning': 'true'
+        },
         body: JSON.stringify({
           username: username,
           password: password,

@@ -10,7 +10,7 @@ import FileBrowser from './FileBrowser';
 import BackupList from './BackupList';
 
 // --- REAL API CALLS ---
-const API_BASE = `${import.meta.env.VITE_API_URL }`;
+const API_BASE = `${import.meta.env.VITE_API_URL || 'http://localhost:8080'}/api`;
 
 const api = {
   fetchDashboardData: async () => {
@@ -19,10 +19,18 @@ const api = {
     
     try {
       // Fetch backups and storage in parallel
-      const baseUrl = import.meta.env.VITE_API_URL ;
+      const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
       const [backupsResponse, storageResponse] = await Promise.all([
-        fetch(`${API_BASE}/backups?uid=${uid}`),
-        fetch(`${baseUrl}/api/storage/${uid}`)
+        fetch(`${API_BASE}/backups?uid=${uid}`, {
+          headers: {
+            'ngrok-skip-browser-warning': 'true'
+          }
+        }),
+        fetch(`${baseUrl}/api/storage/${uid}`, {
+          headers: {
+            'ngrok-skip-browser-warning': 'true'
+          }
+        })
       ]);
       
       const backups = await backupsResponse.json();
