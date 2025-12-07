@@ -263,7 +263,7 @@ export default function App() {
                     </span>
                   </div>
                   <p className="text-sm sm:text-base md:text-lg text-gray-300 flex-1 pt-0.5">
-                    If the server is not running please call{" "}
+                    If the server is not running please mail/ hover on here{" "}
                     <a
                       href="mailto:agupta29_be23@thapar.edu"
                       className="font-semibold text-cyan-400 hover:underline"
